@@ -1,0 +1,174 @@
+/* src/components/post-form/post-form.css */
+
+/* Estilos para el contenedor del modal y su encabezado/pie de página */
+.post-form-modal {
+    width: 90%;
+    max-width: 500px;
+    border: none;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #333; /* Fondo oscuro */
+    color: white; /* Texto claro */
+}
+
+.post-form-modal::backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #444; /* Línea separadora sutil */
+    padding-bottom: 10px;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: #007bff; /* Color de acento para el título del modal */
+    /* Aquí usarías tu variable de fuente para títulos si la heredas */
+    /* font-family: var(--post-form-title-font, 'Caveat', cursive); */
+}
+
+
+.close-button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: white;
+    padding: 5px 10px; /* Añadido padding para que el área de clic sea más grande */
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+}
+
+.close-button:hover {
+    background-color: #555; /* Fondo ligero al pasar el ratón */
+}
+
+/* Estilos para el formulario y su espaciado */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Espacio entre los grupos de campos */
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    border-top: 1px solid #444; /* Línea separadora sutil */
+    padding-top: 15px;
+}
+
+/* Estilos para los botones de acción */
+.btn-primary,
+.btn-secondary {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    /* Aquí usarías tu variable de fuente para botones */
+    /* font-family: var(--post-form-font, 'Nunito', sans-serif); */
+    /* font-size: var(--post-form-btn-font-size, 1rem); */
+}
+
+.btn-primary {
+    background-color: #007bff; /* Azul vibrante */
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3; /* Azul más oscuro al pasar el ratón */
+    transform: translateY(-1px); /* Pequeño efecto de elevación */
+}
+
+.btn-secondary {
+    background-color: #6c757d; /* Gris */
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268; /* Gris más oscuro al pasar el ratón */
+    transform: translateY(-1px);
+}
+
+/* --- ESTILOS PARA FLOATING LABEL Y CAMPOS DE ENTRADA --- */
+
+.floating-label {
+    position: relative;
+    /* Un poco de margen inferior para separar mejor si no lo maneja el 'gap' del form */
+    margin-bottom: 10px;
+}
+
+/* Estilo general para todos los inputs y textareas dentro de un floating-label */
+.floating-label input[type="text"],
+.floating-label input[type="date"],
+.floating-label textarea {
+    width: 100%; /* Muy importante para que ocupen todo el ancho del contenedor */
+    padding: 15px 15px 5px 15px; /* Más padding arriba para el label flotante, menos abajo */
+    box-sizing: border-box; /* Asegura que padding y border se incluyan en el width */
+    background-color: #444; /* Fondo del campo ligeramente más claro que el modal */
+    color: white; /* Color del texto que se escribe */
+    border: 1px solid #666; /* Borde sutil */
+    border-radius: 5px;
+    font-size: 1rem; /* Tamaño de fuente normal */
+    line-height: 1.5; /* Altura de línea para mejor legibilidad */
+    /* Para el textarea, quitar el resize para evitar que rompa el layout si no se controla bien */
+    resize: vertical; /* Permite solo redimensionar verticalmente */
+}
+
+/* Estado de enfoque para inputs y textareas */
+.floating-label input[type="text"]:focus,
+.floating-label input[type="date"]:focus,
+.floating-label textarea:focus {
+    outline: none; /* Elimina el contorno azul por defecto del navegador */
+    border-color: #007bff; /* Borde de acento al enfocar */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Sombra suave de acento */
+}
+
+/* Estilos de la etiqueta flotante */
+.floating-label label {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%); /* Ajustado para centrar verticalmente inicialmente */
+    color: #a9a9a9; /* Gris suave para el texto de la etiqueta */
+    pointer-events: none; /* Crucial para poder hacer clic en el input a través de la etiqueta */
+    transition: all 0.2s ease; /* Transición suave para el efecto flotante */
+    background-color: transparent; /* Asegura que el fondo sea transparente por defecto */
+    padding: 0 5px; /* Pequeño padding horizontal para 'separar' el fondo cuando flote */
+}
+
+/* Cuando el input está enfocado O tiene contenido (no placeholder) */
+.floating-label input[type="text"]:focus + label,
+.floating-label input[type="date"]:focus + label,
+.floating-label textarea:focus + label,
+.floating-label input[type="text"]:not(:placeholder-shown) + label,
+.floating-label input[type="date"]:not(:placeholder-shown) + label,
+.floating-label textarea:not(:placeholder-shown) + label {
+    top: 0; /* Mueve la etiqueta a la parte superior */
+    transform: translateY(-50%) scale(0.8); /* La escala un poco para que sea más pequeña */
+    color: white; /* Color blanco cuando está flotando */
+    background-color: #333; /* Fondo para que se vea por encima del borde del input */
+    padding: 0 5px; /* Padding para que el fondo no cubra el texto flotante */
+}
+
+/* Ajuste específico para el input[type="date"] para Chrome/Edge */
+.floating-label input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1); /* Invierte el color del icono del calendario para que se vea blanco */
+    cursor: pointer;
+}
+
+/* Ajuste para el tamaño del texto pequeño debajo de las etiquetas */
+small {
+    font-size: 0.8em;
+    color: #888;
+    margin-top: -10px; /* Puede necesitar ajuste dependiendo del gap */
+    display: block; /* Para que ocupe su propia línea */
+}

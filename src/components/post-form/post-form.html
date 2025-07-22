@@ -1,5 +1,10 @@
-<template id="post-form-template">
+<template id="postFormTemplate">
     <dialog class="post-form-modal">
+
+        <div class="modal-header">
+            <h2>Publicar Post</h2>
+            <button id="closeModalButton" class="close-button">&times;</button>
+        </div>
 
         <form id="postForm" method="dialog">
             <input type="hidden" id="postId" name="postId" class="post-id">
@@ -12,7 +17,7 @@
                     placeholder="" 
                     required
                 >
-                <label for="postTitle">Título del Formulario</label>
+                <label for="postTitle">Título del Post:</label>
             </div>
             <div class="floating-label">
                 <textarea 
@@ -20,11 +25,9 @@
                     class="post-content" 
                     name="postContent" 
                     placeholder="" 
-                    rows="4" 
-                    cols="50" 
                     required
                 ></textarea>
-                <label for="postContent">Contenido del Formulario</label>
+                <label for="postContent">Contenido del Post</label>
             </div>
             <div class="floating-label">
                 <input 
