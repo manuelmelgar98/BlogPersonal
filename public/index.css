@@ -1,0 +1,29 @@
+/*Nunito (texto) + Caveat (títulos)*/
+@import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap'); /* Nunito */
+@import url('https://fonts.googleapis.com/css2?family=Caveat&display=swap'); /* Caveat */
+
+:root {
+    --font-text: 'Nunito', sans-serif;
+    --font-title: 'Caveat', cursive;
+    --btn-font-size: 1rem;
+}
+
+body {
+    font-family: var(--font-text);
+}
+
+h1, h2, h3 {
+    font-family: var(--font-title);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+post-form {
+    --post-form-font: var(--font-text);
+    --post-form-title-font: var(--font-title);
+    --post-form-btn-font-size: var(--btn-font-size);
+}
