@@ -12,6 +12,21 @@ class PostForm extends HTMLElement {
         console.log('PostForm connectedCallback called');
         await loadComponentAsset('../src/components/post-form/post-form', 'html', this._shadowRoot, '#postFormTemplate');
         await loadComponentAsset('../src/components/post-form/post-form', 'css', this._shadowRoot);
+        this._setupEventListeners();
+    }
+    _setupEventListeners() {
+        const dialog = this._shadowRoot.querySelector('dialog');
+        const closeModalButton = this._shadowRoot.getElementById('closeModalButton');
+        const cancelButton = this._shadowRoot.getElementById('cancelButton');
+        document.addEventListener('open-post-form', () => {
+            dialog?.showModal();
+        });
+        closeModalButton?.addEventListener('click', () => {
+            dialog?.close();
+        });
+        cancelButton?.addEventListener('click', () => {
+            dialog?.close();
+        });
     }
 }
 customElements.define('post-form', PostForm);
