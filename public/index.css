@@ -1,29 +1,83 @@
 /*Nunito (texto) + Caveat (títulos)*/
-@import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap'); /* Nunito */
-@import url('https://fonts.googleapis.com/css2?family=Caveat&display=swap'); /* Caveat */
+@import url("https://fonts.googleapis.com/css2?family=Nunito&display=swap"); /* Nunito */
+@import url("https://fonts.googleapis.com/css2?family=Caveat&display=swap"); /* Caveat */
 
 :root {
-    --font-text: 'Nunito', sans-serif;
-    --font-title: 'Caveat', cursive;
-    --btn-font-size: 1rem;
+  --font-text: "Nunito", sans-serif;
+  --font-title: "Caveat", cursive;
+  --btn-font-size: 1rem;
 }
 
 body {
-    font-family: var(--font-text);
+  font-family: var(--font-text);
 }
 
-h1, h2, h3 {
-    font-family: var(--font-title);
+h1,
+h2,
+h3 {
+  font-family: var(--font-title);
 }
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  font-family: "Montserrat", sans-serif;
+  background-color: #242424;
+  margin: 0;
+  padding: 0;
+  color: white;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+header {
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 1em;
+}
+
+footer {
+  background-color: #333;
+  color: white;
+  text-align: center;
+  padding: 1rem;
+}
+
+a {
+  color: inherit;
+}
+
+a:link,
+a:visited,
+a:hover,
+a:active {
+  color: #007bff !important;
 }
 
 post-form {
-    --post-form-font: var(--font-text);
-    --post-form-title-font: var(--font-title);
-    --post-form-btn-font-size: var(--btn-font-size);
+  --post-form-font: var(--font-text);
+  --post-form-title-font: var(--font-title);
+  --post-form-btn-font-size: var(--btn-font-size);
 }
