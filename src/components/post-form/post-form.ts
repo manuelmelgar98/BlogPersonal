@@ -1,12 +1,92 @@
+import { Post } from '../../models/post.js';
 import { loadComponentAsset } from '../../utils/domUtils.js';
 
 class PostForm extends HTMLElement {
     private _shadowRoot!: ShadowRoot;
     private _initialized = false;
+    private _currentPost: Post | null = null;
+
+    static get observedAttributes() {
+        return ['post-data'];
+    }
 
     constructor() {
         super();
         this._shadowRoot = this.attachShadow({ mode: 'open' });
+    }
+
+    attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null): void {        
+        if (name === 'post-data') {
+            if (newValue !== null) {
+                try {
+                this._currentPost = JSON.parse(newValue) as Post;
+                this._populateForm(this._currentPost);
+                this._openModal();
+                const modalTitle = this._shadowRoot.getElementById('modalTitle') as HTMLHeadingElement;
+                if (modalTitle) modalTitle.textContent = 'Editar Post';
+                } catch (error) {
+                    console.error('Error parsing post data:', error);
+                    this._currentPost = null;
+                    this._resetForm();
+                }
+            } else {
+                this._currentPost = null;
+                this._resetForm();                
+                const modalTitle = this._shadowRoot.getElementById('modalTitle') as HTMLHeadingElement;
+                if (modalTitle) modalTitle.textContent = 'Crear Nuevo Post';                
+            }
+        } 
+    }
+
+    private _populateForm(post: Post): void {
+        const id = this._shadowRoot.getElementById('postId') as HTMLInputElement;
+        const title = this._shadowRoot.getElementById('postTitle') as HTMLInputElement;
+        const content = this._shadowRoot.getElementById('postContent') as HTMLTextAreaElement;
+        const categories = this._shadowRoot.getElementById('postCategories') as HTMLInputElement;
+        const tags = this._shadowRoot.getElementById('postTags') as HTMLInputElement;
+        const date = this._shadowRoot.getElementById('postDate') as HTMLInputElement;
+        
+        if (id) id.value = post.id.toString();
+        if (title) title.value = post.title;
+        if (content) content.value = post.content;
+        if (categories) categories.value = post.categories.join(', ');
+        if (tags) tags.value = post.tags.join(', ');
+        if (date && post.date) {
+            const d = new Date(post.date);
+            date.value = d.toISOString().split('T')[0];
+        } else if (date) {
+            date.value = '';
+        }
+
+    }
+
+    private _openModal(): void {
+        const dialog = this._shadowRoot.querySelector<HTMLDialogElement>('dialog');
+        if (dialog) {
+            dialog.showModal();
+        } else {
+            console.error('Dialog element not found in shadow DOM');
+        }
+    }
+
+    private _closeModal(): void {
+        const dialog = this._shadowRoot.querySelector<HTMLDialogElement>('dialog');
+        if (dialog) {
+            dialog.close();
+        } else {
+            console.error('Dialog element not found in shadow DOM');
+        }
+    }
+
+    private _resetForm(): void {
+        const form = this._shadowRoot.querySelector<HTMLFormElement>('form');
+        if (form) {
+            form.reset();
+        }
+    }
+
+    private _handleSave(): void {
+
     }
 
     async connectedCallback(): Promise<void> {
@@ -14,8 +94,8 @@ class PostForm extends HTMLElement {
         this._initialized = true;
         console.log('PostForm connectedCallback called');
         
-        await loadComponentAsset('../src/components/post-form/post-form', 'html', this._shadowRoot, '#postFormTemplate');
-        await loadComponentAsset('../src/components/post-form/post-form', 'css', this._shadowRoot);
+        await loadComponentAsset('./dist/components/post-form/post-form', 'html', this._shadowRoot, '#postFormTemplate');
+        await loadComponentAsset('./dist/components/post-form/post-form', 'css', this._shadowRoot);
 
         this._setupEventListeners();
     }
@@ -24,17 +104,26 @@ class PostForm extends HTMLElement {
         const dialog = this._shadowRoot.querySelector<HTMLDialogElement>('dialog');
         const closeModalButton = this._shadowRoot.getElementById('closeModalButton');
         const cancelButton = this._shadowRoot.getElementById('cancelButton');
+        const saveButton = this._shadowRoot.getElementById('saveButton');
+        const postForm = this._shadowRoot.getElementById('postForm') as HTMLFormElement;
 
         document.addEventListener('open-post-form', () => {
-            dialog?.showModal();
+            this._resetForm();
+            this._openModal();
         });
 
-        closeModalButton?.addEventListener('click', () => {
-            dialog?.close();
+        closeModalButton?.addEventListener('click', () => this._closeModal());
+
+        cancelButton?.addEventListener('click', () => this._closeModal());
+
+        postForm?.addEventListener('submit', (event) => {
+            event.preventDefault();
+            this._handleSave();            
         });
 
-        cancelButton?.addEventListener('click', () => {
-            dialog?.close();
+        dialog?.addEventListener('close', () => {
+            this._resetForm();
+            this.removeAttribute('post-data');
         });
     }
 }
