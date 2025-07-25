@@ -1,5 +1,6 @@
 import { Post } from '../../models/post.js';
 import { loadComponentAsset } from '../../utils/domUtils.js';
+import { showAlert, showConfirm } from '../../utils/messages.js';
 
 class PostForm extends HTMLElement {
     private _shadowRoot!: ShadowRoot;
@@ -20,6 +21,10 @@ class PostForm extends HTMLElement {
             if (newValue !== null) {
                 try {
                 this._currentPost = JSON.parse(newValue) as Post;
+                console.log(name, oldValue, newValue);
+                
+                console.log('Post data received:', this._currentPost);
+                
                 this._populateForm(this._currentPost);
                 this._openModal();
                 const modalTitle = this._shadowRoot.getElementById('modalTitle') as HTMLHeadingElement;
@@ -57,7 +62,6 @@ class PostForm extends HTMLElement {
         } else if (date) {
             date.value = '';
         }
-
     }
 
     private _openModal(): void {
@@ -85,9 +89,53 @@ class PostForm extends HTMLElement {
         }
     }
 
-    private _handleSave(): void {
+private _handleSave(): void {
+    showConfirm('¿Estás seguro de que deseas guardar los cambios?', () => {
+        const titleInput = this._shadowRoot.getElementById('postTitle') as HTMLInputElement;
+        const contentInput = this._shadowRoot.getElementById('postContent') as HTMLTextAreaElement;
+        const categoriesInput = this._shadowRoot.getElementById('postCategories') as HTMLInputElement;
+        const tagsInput = this._shadowRoot.getElementById('postTags') as HTMLInputElement;
+        const dateInput = this._shadowRoot.getElementById('postDate') as HTMLInputElement;
 
-    }
+        const title = titleInput.value.trim();
+        const content = contentInput.value.trim();
+        const categories = categoriesInput.value.split(',').map(cat => cat.trim()).filter(cat => cat);
+        const tags = tagsInput.value.split(',').map(tag => tag.trim()).filter(tag => tag);
+        const date = dateInput.value ? new Date(dateInput.value).toISOString() : new Date().toISOString();
+
+        if (!title || !content) {
+            showAlert('Por favor, completa los campos de título y contenido, son obligatorios.', 'Campos Incompletos');
+            return;
+        }
+
+        const newOrUpdatedPost: Post = {
+            id: this._currentPost?.id || Date.now(),
+            title,
+            content,
+            date,
+            categories,
+            tags
+        };
+
+        if (this._currentPost &&
+            this._currentPost.title === newOrUpdatedPost.title &&
+            this._currentPost.content === newOrUpdatedPost.content &&
+            JSON.stringify(this._currentPost.categories.sort()) === JSON.stringify(newOrUpdatedPost.categories.sort()) &&
+            JSON.stringify(this._currentPost.tags.sort()) === JSON.stringify(newOrUpdatedPost.tags.sort()) &&
+            this._currentPost.date === newOrUpdatedPost.date
+        ) {
+            showAlert('No se detectaron cambios para guardar.', 'Sin Cambios');
+            this._closeModal();
+            return;
+        }
+
+        console.log('Post data to save:', newOrUpdatedPost);
+
+        showAlert('¡Formulario validado y listo para guardar!', 'Éxito de Validación');
+        this._closeModal();
+    }, 'Confirmar Guardado');
+    
+}
 
     async connectedCallback(): Promise<void> {
         if (this._initialized) return;
