@@ -1,6 +1,7 @@
 import { Post } from '../../models/post.js';
 import { loadComponentAsset } from '../../utils/domUtils.js';
 import { showAlert, showConfirm } from '../../utils/messages.js';
+import { createPost, updatePost } from '../../api/postApi.js';
 
 class PostForm extends HTMLElement {
     private _shadowRoot!: ShadowRoot;
@@ -90,7 +91,7 @@ class PostForm extends HTMLElement {
     }
 
 private _handleSave(): void {
-    showConfirm('¿Estás seguro de que deseas guardar los cambios?', () => {
+    showConfirm('¿Estás seguro de que deseas guardar los cambios?', async () => {
         const titleInput = this._shadowRoot.getElementById('postTitle') as HTMLInputElement;
         const contentInput = this._shadowRoot.getElementById('postContent') as HTMLTextAreaElement;
         const categoriesInput = this._shadowRoot.getElementById('postCategories') as HTMLInputElement;
@@ -129,10 +130,20 @@ private _handleSave(): void {
             return;
         }
 
-        console.log('Post data to save:', newOrUpdatedPost);
-
-        showAlert('¡Formulario validado y listo para guardar!', 'Éxito de Validación');
-        this._closeModal();
+        try {
+            if (this._currentPost === null)
+                await createPost(newOrUpdatedPost);
+            else
+                await updatePost(newOrUpdatedPost);
+            
+            showAlert('¡Formulario validado y listo para guardar!', 'Éxito de Validación');
+            this._closeModal();
+        } catch (error) {   
+            showAlert('¡Hubo un error inesperado para guardar!', 'Error al Guardar');
+            this._closeModal();
+        }
+        console.log(localStorage.getItem('blogPosts'));
+        
     }, 'Confirmar Guardado');
     
 }
