@@ -8,15 +8,6 @@ class PostForm extends HTMLElement {
     private _initialized = false;
     private _currentPost: Post | null = null;
 
-    static get observedAttributes() {
-        return ['post-data'];
-    }
-
-    constructor() {
-        super();
-        this._shadowRoot = this.attachShadow({ mode: 'open' });
-    }
-
     attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null): void {        
         if (name === 'post-data') {
             if (newValue !== null) {
@@ -90,68 +81,88 @@ class PostForm extends HTMLElement {
         }
     }
 
-private _handleSave(): void {
-    showConfirm('¿Estás seguro de que deseas guardar los cambios?', async () => {
-        const titleInput = this._shadowRoot.getElementById('postTitle') as HTMLInputElement;
-        const contentInput = this._shadowRoot.getElementById('postContent') as HTMLTextAreaElement;
-        const categoriesInput = this._shadowRoot.getElementById('postCategories') as HTMLInputElement;
-        const tagsInput = this._shadowRoot.getElementById('postTags') as HTMLInputElement;
-        const dateInput = this._shadowRoot.getElementById('postDate') as HTMLInputElement;
+    private _handleSave(): void {
+        showConfirm('¿Estás seguro de que deseas guardar los cambios?', async () => {
+            const titleInput = this._shadowRoot.getElementById('postTitle') as HTMLInputElement;
+            const contentInput = this._shadowRoot.getElementById('postContent') as HTMLTextAreaElement;
+            const categoriesInput = this._shadowRoot.getElementById('postCategories') as HTMLInputElement;
+            const tagsInput = this._shadowRoot.getElementById('postTags') as HTMLInputElement;
+            const dateInput = this._shadowRoot.getElementById('postDate') as HTMLInputElement;
 
-        const title = titleInput.value.trim();
-        const content = contentInput.value.trim();
-        const categories = categoriesInput.value.split(',').map(cat => cat.trim()).filter(cat => cat);
-        const tags = tagsInput.value.split(',').map(tag => tag.trim()).filter(tag => tag);
-        const date = dateInput.value ? new Date(dateInput.value).toISOString() : new Date().toISOString();
+            const title = titleInput.value.trim();
+            const content = contentInput.value.trim();
+            const categories = categoriesInput.value.split(',').map(cat => cat.trim()).filter(cat => cat);
+            const tags = tagsInput.value.split(',').map(tag => tag.trim()).filter(tag => tag);
+            const date = dateInput.value ? new Date(dateInput.value).toISOString() : new Date().toISOString();
 
-        if (!title || !content) {
-            showAlert('Por favor, completa los campos de título y contenido, son obligatorios.', 'Campos Incompletos');
-            return;
-        }
+            if (!title || !content) {
+                showAlert('Por favor, completa los campos de título y contenido, son obligatorios.', 'Campos Incompletos');
+                return;
+            }
 
-        const newOrUpdatedPost: Post = {
-            id: this._currentPost?.id || Date.now(),
-            title,
-            content,
-            date,
-            categories,
-            tags
-        };
+            const newOrUpdatedPost: Post = {
+                id: this._currentPost?.id || Date.now(),
+                title,
+                content,
+                date,
+                categories,
+                tags
+            };
 
-        if (this._currentPost &&
-            this._currentPost.title === newOrUpdatedPost.title &&
-            this._currentPost.content === newOrUpdatedPost.content &&
-            JSON.stringify(this._currentPost.categories.sort()) === JSON.stringify(newOrUpdatedPost.categories.sort()) &&
-            JSON.stringify(this._currentPost.tags.sort()) === JSON.stringify(newOrUpdatedPost.tags.sort()) &&
-            this._currentPost.date === newOrUpdatedPost.date
-        ) {
-            showAlert('No se detectaron cambios para guardar.', 'Sin Cambios');
-            this._closeModal();
-            return;
-        }
+            if (this._currentPost &&
+                this._currentPost.title === newOrUpdatedPost.title &&
+                this._currentPost.content === newOrUpdatedPost.content &&
+                JSON.stringify(this._currentPost.categories.sort()) === JSON.stringify(newOrUpdatedPost.categories.sort()) &&
+                JSON.stringify(this._currentPost.tags.sort()) === JSON.stringify(newOrUpdatedPost.tags.sort()) &&
+                this._currentPost.date === newOrUpdatedPost.date
+            ) {
+                showAlert('No se detectaron cambios para guardar.', 'Sin Cambios');
+                this._closeModal();
+                return;
+            }
 
-        try {
-            if (this._currentPost === null)
-                await createPost(newOrUpdatedPost);
-            else
-                await updatePost(newOrUpdatedPost);
-            
-            showAlert('¡Formulario validado y listo para guardar!', 'Éxito de Validación');
-            this._closeModal();
-        } catch (error) {   
-            showAlert('¡Hubo un error inesperado para guardar!', 'Error al Guardar');
-            this._closeModal();
-        }
-        console.log(localStorage.getItem('blogPosts'));
+            try {
+                let successMessage = '';
+                let successTitle = '';
+                const isEditing = this._currentPost !== null;
+
+                if (isEditing) {
+                    await updatePost(newOrUpdatedPost);
+                    successMessage = `Post "${newOrUpdatedPost.title}" actualizado exitosamente.`;
+                    successTitle = 'Post Actualizado';
+                } else {
+                    await createPost(newOrUpdatedPost);
+                    successMessage = `Post "${newOrUpdatedPost.title}" creado exitosamente.`;
+                    successTitle = 'Post Creado';
+                }
+                showAlert(successMessage, successTitle);
+                this._closeModal();
+
+                document.dispatchEvent(new CustomEvent('post-changed', {
+                    bubbles: true,
+                    composed: true,
+                    detail: { action: isEditing ? 'update' : 'create', post: newOrUpdatedPost }
+                }));
+            } catch (error) {   
+                console.error('Error al guardar/actualizar el post:', error);
+                showAlert(`¡Hubo un error inesperado al guardar el post: ${error || 'Error desconocido'}!`, 'Error al Guardar');
+            }
+        }, 'Confirmar Guardado');
         
-    }, 'Confirmar Guardado');
-    
-}
+    }
+
+    static get observedAttributes() {
+        return ['post-data'];
+    }
+
+    constructor() {
+        super();
+        this._shadowRoot = this.attachShadow({ mode: 'open' });
+    }
 
     async connectedCallback(): Promise<void> {
         if (this._initialized) return;
         this._initialized = true;
-        console.log('PostForm connectedCallback called');
         
         await loadComponentAsset('./dist/components/post-form/post-form', 'html', this._shadowRoot, '#postFormTemplate');
         await loadComponentAsset('./dist/components/post-form/post-form', 'css', this._shadowRoot);
