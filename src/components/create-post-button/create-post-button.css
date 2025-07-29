@@ -1,0 +1,49 @@
+/* Aplica las variables de fuente al propio componente para que se hereden en el Shadow DOM */
+/* Asegúrate de que estas variables estén definidas en tu index.css y se pasen al host de tu custom element */
+:host {
+    --create-btn-font: var(--font-text, sans-serif); /* Fuente para el texto del botón */
+    --create-btn-font-size: var(--btn-font-size, 1rem); /* Tamaño de fuente para el botón */
+    --create-btn-primary-bg: #007bff; /* Color de fondo primario */
+    --create-btn-primary-hover-bg: #0056b3; /* Color de fondo primario al hover */
+    --create-btn-text-color: white; /* Color del texto del botón */
+    
+    display: inline-block; /* Permite que el host se comporte como un bloque en línea */
+    margin-left: auto; /* Para alinearlo a la derecha si está en un flex container */
+    margin-right: 20px; /* Margen a la derecha para separarlo de otros elementos */
+}
+
+
+.btn-create-post {
+    font-family: var(--create-btn-font); /* Usa la variable de fuente heredada */
+    font-size: var(--create-btn-font-size); /* Usa la variable de tamaño de fuente heredada */
+    
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px; /* Ajusta según el diseño de tu header/controls */
+    
+    background-color: var(--create-btn-primary-bg); /* Usa el color primario de tus variables */
+    color: var(--create-btn-text-color); /* Usa el color de texto de tus variables */
+
+    /* Estilos adicionales que ya tenías para botones */
+    width: auto;
+    height: 40px;
+    padding: 0 15px;
+    border: 2px solid #ccc; /* Borde similar al input de búsqueda */
+    border-radius: 20px; /* Bordes más redondeados */
+    outline: none; /* Quita el outline al enfocar */
+    font-size: 16px; /* Tamaño de fuente más específico si lo necesitas */
+    
+    transition: background-color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+}
+
+.btn-create-post:hover {
+    background-color: var(--create-btn-primary-hover-bg); /* Color al pasar el ratón */
+    opacity: 0.9; /* Efecto de opacidad al pasar el ratón */
+    transform: translateY(-1px); /* Ligero efecto de elevación */
+}
+
+.btn-create-post:active {
+    transform: translateY(0); /* Vuelve a la posición original al hacer clic */
+}
