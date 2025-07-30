@@ -1,7 +1,7 @@
 import { loadComponentAsset } from "../../utils/domUtils";
 import { Post } from "../../models/post";
 
-class PostList extends HTMLElement {
+export class PostList extends HTMLElement {
     private _shadowRoot!: ShadowRoot;
     private _initialized = false;
     private _posts: Post[] = [];

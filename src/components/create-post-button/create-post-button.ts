@@ -1,6 +1,6 @@
 import { loadComponentAsset } from '../../utils/domUtils.js';
 
-class CreatePostButton extends HTMLElement {
+export class CreatePostButton extends HTMLElement {
     private _shadowRoot!: ShadowRoot;
     private _initialized = false;
 
