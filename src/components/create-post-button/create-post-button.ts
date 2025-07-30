@@ -19,7 +19,7 @@ class CreatePostButton extends HTMLElement {
         this._setupEventListeners();
     }
 
-    _setupEventListeners(): void {
+    private _setupEventListeners(): void {
         const createPostBtn = this._shadowRoot.getElementById('createPostBtn');
         createPostBtn?.addEventListener('click', () => {
             document.dispatchEvent(new CustomEvent('open-post-form'));
