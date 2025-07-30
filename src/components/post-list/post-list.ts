@@ -1,5 +1,5 @@
-import { loadComponentAsset } from "../../utils/domUtils";
-import { Post } from "../../models/post";
+import { loadComponentAsset } from "../../utils/domUtils.js";
+import { Post } from "../../models/post.js";
 
 export class PostList extends HTMLElement {
     private _shadowRoot!: ShadowRoot;

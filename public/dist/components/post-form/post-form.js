@@ -1,7 +1,7 @@
 import { loadComponentAsset } from '../../utils/domUtils.js';
 import { showAlert, showConfirm } from '../../utils/messages.js';
 import { createPost, updatePost } from '../../api/postApi.js';
-class PostForm extends HTMLElement {
+export class PostForm extends HTMLElement {
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === 'post-data') {
             if (newValue !== null) {
@@ -129,7 +129,7 @@ class PostForm extends HTMLElement {
                 }
                 showAlert(successMessage, successTitle);
                 this._closeModal();
-                document.dispatchEvent(new CustomEvent('post-changed', {
+                document.dispatchEvent(new CustomEvent('posts-changed', {
                     bubbles: true,
                     composed: true,
                     detail: { action: isEditing ? 'update' : 'create', post: newOrUpdatedPost }
