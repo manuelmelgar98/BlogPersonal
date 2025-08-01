@@ -1,5 +1,6 @@
 import { loadComponentAsset } from "../../utils/domUtils.js";
 import { Post } from "../../models/post.js";
+import { dataService } from "../../services/dataService.js";
 
 export class PostList extends HTMLElement {
     private _shadowRoot!: ShadowRoot;
@@ -23,13 +24,15 @@ export class PostList extends HTMLElement {
     }
 
     private async _loadPosts(): Promise<void> {
-        console.log('Loading posts...');
+        this._posts = await dataService.loadAllPosts();
+        this._renderPosts();
     }
 
     private _setupEventListeners(): void {
-        document.addEventListener('posts-changed', async (event: CustomEvent<{ action: 'created' | 'updated' | 'deleted'; post?: Post; postId?: number }>) => {
+        document.addEventListener('posts-changed', (event: CustomEvent<{ action: 'load' | 'created' | 'updated' | 'deleted'; post?: Post; postId?: number; posts: Post[] }>) => {
             console.log('Posts changed event received:', event.detail);
-            await this._loadPosts();
+            this._posts = event.detail.posts; 
+            this._renderPosts();
         });
     }
 
