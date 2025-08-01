@@ -1,0 +1,175 @@
+/* src/components/post-card/post-card.css */
+
+/* Variables CSS para herencia de fuentes y colores desde index.css */
+:host {
+    /* Asegúrate de que estas variables estén definidas en tu index.css y pasen a :host */
+    --card-font-text: var(--font-text, sans-serif);
+    --card-font-title: var(--font-title, sans-serif);
+    --card-bg-color: #2a2a2a; /* Fondo para las tarjetas, un poco más claro que el body */
+    --card-text-color: #e0e0e0; /* Color principal del texto */
+    --card-border-color: #444; /* Color del borde de la tarjeta */
+    --card-shadow-color: rgba(0, 0, 0, 0.3); /* Sombra suave */
+    --card-accent-color: #007bff; /* Color de acento para títulos/enlaces */
+    --icon-button-color: #e0e0e0; /* Color de los iconos */
+    --icon-button-hover-color: #007bff; /* Color de los iconos al pasar el ratón */
+    --delete-icon-color: #dc3545; /* Color del icono de eliminar */
+}
+
+.post-card {
+    background-color: var(--card-bg-color);
+    color: var(--card-text-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px var(--card-shadow-color);
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    /* Asegura que la tarjeta pueda crecer o encogerse en la cuadrícula */
+    width: 100%; /* Ocupa el ancho disponible en su columna */
+    height: 100%; /* Ocupa la altura disponible en su celda de cuadrícula */
+    box-sizing: border-box; /* Padding y borde incluidos en el tamaño */
+    position: relative; /* Necesario para posicionar elementos absolutos dentro */
+    overflow: hidden; /* Oculta cualquier contenido que se desborde, útil para sombras/degradados */
+}
+
+/* --- SECCIÓN SUPERIOR: IMAGEN DE USUARIO Y BOTONES DE ACCIÓN --- */
+.card-header-meta {
+    display: flex;
+    justify-content: space-between; /* Espacia la imagen del usuario y las acciones */
+    align-items: flex-start; /* Alinea los elementos en la parte superior */
+    margin-bottom: 10px; /* Espacio entre el header y el título del post */
+    position: relative; /* Si los iconos se posicionan absolutamente respecto a este, o si este es el contenedor principal de los iconos */
+}
+
+.div-image {
+    flex-shrink: 0; /* Evita que la imagen se encoja */
+    margin-right: 10px; /* Espacio a la derecha de la imagen del usuario */
+}
+
+.post-user-image {
+    width: 50px; /* Tamaño del avatar */
+    height: 50px;
+    border-radius: 50%; /* Hacerla circular */
+    object-fit: cover; /* Asegura que la imagen cubra el área sin distorsionarse */
+    border: 2px solid var(--card-accent-color); /* Borde de acento */
+}
+
+.card-actions {
+    display: flex; /* Para organizar los botones de acción en línea */
+    gap: 5px; /* Espacio entre los iconos */
+    /* Posicionamiento absoluto para colocarlos en la esquina superior derecha */
+    position: absolute; /* Relativo al .post-card si card-header-meta no tiene position: relative */
+    top: 5px;
+    right: 5px;
+    z-index: 10; /* Asegura que estén por encima de otros contenidos */
+}
+
+.icon-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%; /* Hacer los botones de icono circulares */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--icon-button-color); /* Color del icono */
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.icon-button:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Fondo sutil al pasar el ratón */
+    color: var(--icon-button-hover-color); /* Cambia el color del icono */
+}
+
+.icon-button svg {
+    width: 20px; /* Tamaño de los iconos SVG */
+    height: 20px;
+    stroke: currentColor; /* El color del trazo se toma del color del texto del botón */
+}
+
+.delete-post-button:hover {
+    color: var(--delete-icon-color); /* Color rojo para eliminar al pasar el ratón */
+}
+
+/* --- SECCIÓN DE CONTENIDO PRINCIPAL --- */
+.card-content-body {
+    flex-grow: 1; /* Permite que el contenido ocupe el espacio restante */
+    margin-bottom: 10px;
+}
+
+.post-title {
+    font-family: var(--card-font-title); /* Aplica la fuente de títulos */
+    font-size: 1.3rem;
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: var(--card-accent-color); /* Color de acento para el título del post */
+    line-height: 1.2; /* Altura de línea para títulos */
+}
+
+.post-content-excerpt {
+    font-family: var(--card-font-text); /* Aplica la fuente de texto */
+    font-size: 0.9rem;
+    line-height: 1.5;
+    /* Limitar el texto a un número de líneas para el extracto */
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Muestra un máximo de 3 líneas */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 10px;
+}
+
+/* --- SECCIÓN INFERIOR: METADATOS --- */
+.card-footer-meta {
+    font-family: var(--card-font-text);
+    font-size: 0.8em;
+    color: #aaa; /* Color de texto más suave para metadatos */
+    display: flex;
+    flex-wrap: wrap; /* Permite que los elementos se envuelvan */
+    gap: 5px 10px; /* Espacio vertical y horizontal */
+    margin-top: auto; /* Empuja el footer a la parte inferior si hay espacio */
+}
+
+.post-date {
+    font-weight: bold;
+    flex-basis: 100%; /* Hace que la fecha ocupe toda la línea si es necesario */
+}
+
+.post-categories,
+.post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.post-categories span, /* Asumiendo que cada categoría/tag será un span dentro del div */
+.post-tags span {
+    background-color: rgba(0, 123, 255, 0.2); /* Fondo sutil para los badges */
+    color: var(--card-accent-color);
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 0.75em;
+    font-weight: bold;
+    text-transform: capitalize; /* Capitaliza la primera letra */
+}
+
+/* --- RESPONSIVIDAD BÁSICA (opcional, pero buena práctica) --- */
+@media (max-width: 768px) {
+    .post-card {
+        padding: 10px;
+    }
+    .post-user-image {
+        width: 40px;
+        height: 40px;
+    }
+    .icon-button svg {
+        width: 18px;
+        height: 18px;
+    }
+    .post-title {
+        font-size: 1.1rem;
+    }
+    .post-content-excerpt {
+        font-size: 0.85rem;
+    }
+}

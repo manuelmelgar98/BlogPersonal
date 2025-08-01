@@ -6,6 +6,7 @@ declare global {
         'post-form': PostForm; // Asegúrate de que PostForm esté exportado en su archivo .ts
         'post-list': PostList; // Asegúrate de que PostList esté exportado en su archivo .ts
         'create-post-button': CreatePostButton; // Asegúrate de que CreatePostButton esté exportado
+        'post-card': PostCard; // Asegúrate de que PostCard esté exportado en su archivo .ts
         // ... agrega aquí tus otras clases de Custom Elements
     }
 

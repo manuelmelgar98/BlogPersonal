@@ -171,7 +171,7 @@ export class PostForm extends HTMLElement {
             }
             catch (error) {
                 console.error('Error al guardar/actualizar el post:', error);
-                showAlert(`¡Hubo un error inesperado al guardar el post: ${error || 'Error desconocido'}!`, 'Error al Guardar');
+                showAlert(`¡Hubo un error inesperado al guardar el post: ${error.message || 'Error desconocido'}!`, 'Error al Guardar');
             }
         }, 'Confirmar Guardado');
     }
