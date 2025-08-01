@@ -12,7 +12,7 @@ declare global {
     // Para tus Custom Events despachados en `document` (o `window`)
     interface DocumentEventMap {
         'open-post-form': CustomEvent<void>; // No tiene detalle, o podrías usar CustomEvent<undefined>
-        'posts-changed': CustomEvent<{ action: 'created' | 'updated' | 'deleted'; post?: Post; postId?: number }>;
+        'posts-changed': CustomEvent<{ action: 'load' | 'created' | 'updated' | 'deleted'; post?: Post; postId?: number, posts: Post[] }>;
         // ... agrega aquí cualquier otro Custom Event que escuches en `document` o `window`
     }
 

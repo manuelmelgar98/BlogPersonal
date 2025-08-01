@@ -1,12 +1,59 @@
 import { Post } from '../../models/post.js';
 import { loadComponentAsset } from '../../utils/domUtils.js';
 import { showAlert, showConfirm } from '../../utils/messages.js';
-import { createPost, updatePost } from '../../api/postApi.js';
+// import { createPost, updatePost } from '../../api/postApi.js';
+import { dataService } from '../../services/dataService.js';
 
 export class PostForm extends HTMLElement {
     private _shadowRoot!: ShadowRoot;
     private _initialized = false;
     private _currentPost: Post | null = null;
+
+    static get observedAttributes() {
+        return ['post-data'];
+    }
+
+    constructor() {
+        super();
+        this._shadowRoot = this.attachShadow({ mode: 'open' });
+    }
+
+    async connectedCallback(): Promise<void> {
+        if (this._initialized) return;
+        this._initialized = true;
+        
+        await loadComponentAsset('./dist/components/post-form/post-form', 'html', this._shadowRoot, '#postFormTemplate');
+        await loadComponentAsset('./dist/components/post-form/post-form', 'css', this._shadowRoot);
+
+        this._setupEventListeners();
+    }
+
+    private _setupEventListeners(): void {
+        const dialog = this._shadowRoot.querySelector<HTMLDialogElement>('dialog');
+        const closeModalButton = this._shadowRoot.getElementById('closeModalButton');
+        const cancelButton = this._shadowRoot.getElementById('cancelButton');
+        const saveButton = this._shadowRoot.getElementById('saveButton');
+        const postForm = this._shadowRoot.getElementById('postForm') as HTMLFormElement;
+
+        document.addEventListener('open-post-form', () => {
+            this._resetForm();
+            this._openModal();
+        });
+
+        closeModalButton?.addEventListener('click', () => this._closeModal());
+
+        cancelButton?.addEventListener('click', () => this._closeModal());
+
+        postForm?.addEventListener('submit', (event) => {
+            event.preventDefault();
+            this._handleSave();            
+        });
+
+        dialog?.addEventListener('close', () => {
+            this._resetForm();
+            this.removeAttribute('post-data');
+        });
+    }
 
     attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null): void {        
         if (name === 'post-data') {
@@ -127,74 +174,24 @@ export class PostForm extends HTMLElement {
                 const isEditing = this._currentPost !== null;
 
                 if (isEditing) {
-                    await updatePost(newOrUpdatedPost);
+                    await dataService.updatePost(newOrUpdatedPost);
                     successMessage = `Post "${newOrUpdatedPost.title}" actualizado exitosamente.`;
                     successTitle = 'Post Actualizado';
                 } else {
-                    await createPost(newOrUpdatedPost);
+                    await dataService.addPost(newOrUpdatedPost);
                     successMessage = `Post "${newOrUpdatedPost.title}" creado exitosamente.`;
                     successTitle = 'Post Creado';
                 }
+                
                 showAlert(successMessage, successTitle);
                 this._closeModal();
 
-                document.dispatchEvent(new CustomEvent('posts-changed', {
-                    bubbles: true,
-                    composed: true,
-                    detail: { action: isEditing ? 'update' : 'create', post: newOrUpdatedPost }
-                }));
             } catch (error) {   
                 console.error('Error al guardar/actualizar el post:', error);
-                showAlert(`¡Hubo un error inesperado al guardar el post: ${error || 'Error desconocido'}!`, 'Error al Guardar');
+                showAlert(`¡Hubo un error inesperado al guardar el post: ${(error as Error).message || 'Error desconocido'}!`, 'Error al Guardar');
             }
         }, 'Confirmar Guardado');
         
-    }
-
-    static get observedAttributes() {
-        return ['post-data'];
-    }
-
-    constructor() {
-        super();
-        this._shadowRoot = this.attachShadow({ mode: 'open' });
-    }
-
-    async connectedCallback(): Promise<void> {
-        if (this._initialized) return;
-        this._initialized = true;
-        
-        await loadComponentAsset('./dist/components/post-form/post-form', 'html', this._shadowRoot, '#postFormTemplate');
-        await loadComponentAsset('./dist/components/post-form/post-form', 'css', this._shadowRoot);
-
-        this._setupEventListeners();
-    }
-
-    private _setupEventListeners(): void {
-        const dialog = this._shadowRoot.querySelector<HTMLDialogElement>('dialog');
-        const closeModalButton = this._shadowRoot.getElementById('closeModalButton');
-        const cancelButton = this._shadowRoot.getElementById('cancelButton');
-        const saveButton = this._shadowRoot.getElementById('saveButton');
-        const postForm = this._shadowRoot.getElementById('postForm') as HTMLFormElement;
-
-        document.addEventListener('open-post-form', () => {
-            this._resetForm();
-            this._openModal();
-        });
-
-        closeModalButton?.addEventListener('click', () => this._closeModal());
-
-        cancelButton?.addEventListener('click', () => this._closeModal());
-
-        postForm?.addEventListener('submit', (event) => {
-            event.preventDefault();
-            this._handleSave();            
-        });
-
-        dialog?.addEventListener('close', () => {
-            this._resetForm();
-            this.removeAttribute('post-data');
-        });
     }
 }
 
