@@ -1,11 +1,13 @@
 import { loadComponentAsset } from "../../utils/domUtils.js";
 import { Post } from "../../models/post.js";
 import { dataService } from "../../services/dataService.js";
+import { PostCard } from "../post-card/post-card.js";
 
 export class PostList extends HTMLElement {
     private _shadowRoot!: ShadowRoot;
     private _initialized = false;
     private _posts: Post[] = [];
+    private _postsContainer!: HTMLDivElement;
 
     constructor() {
         super();
@@ -18,12 +20,16 @@ export class PostList extends HTMLElement {
 
         await loadComponentAsset('./dist/components/post-list/post-list', 'html', this._shadowRoot, '#postListTemplate');
         await loadComponentAsset('./dist/components/post-list/post-list', 'css', this._shadowRoot);
+
+        this._postsContainer = this._shadowRoot.getElementById('postsContainer') as HTMLDivElement;
+
         await this._loadPosts();
 
         this._setupEventListeners();
     }
 
     private async _loadPosts(): Promise<void> {
+        this._postsContainer.innerHTML = '';
         this._posts = await dataService.loadAllPosts();
         this._renderPosts();
     }
@@ -37,7 +43,15 @@ export class PostList extends HTMLElement {
     }
 
     private _renderPosts(): void {
-        console.log('Rendering posts...');
+        const postListContainer = this._shadowRoot.querySelector('.posts-container');
+
+        if (!postListContainer) return;
+        postListContainer.innerHTML = '';
+        this._posts.forEach(post => {
+            const postCard = document.createElement('post-card') as PostCard;
+            postCard.setAttribute('post-data', JSON.stringify(post));
+            postListContainer.appendChild(postCard);
+        });
     }
 
 
