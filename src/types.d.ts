@@ -15,7 +15,7 @@ declare global {
         'open-post-form': CustomEvent<void>; // No tiene detalle, o podrías usar CustomEvent<undefined>
         'posts-changed': CustomEvent<{ action: 'load' | 'created' | 'updated' | 'deleted'; post?: Post; postId?: number, posts: Post[] }>;
         'view-post-requested': CustomEvent<{ postId: number }>; // Detalle con ID del post
-        'delete-post-requested': CustomEvent<{ action: 'deleted' ; postId: number }>; // Detalle con ID del post a eliminar
+        'delete-post-requested': CustomEvent<{ postId: number }>; // Detalle con ID del post a eliminar
         // ... agrega aquí cualquier otro Custom Event que escuches en `document` o `window`
     }
 

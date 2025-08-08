@@ -59,7 +59,7 @@ export class PostCard extends HTMLElement {
             document.dispatchEvent(new CustomEvent('delete-post-requested', {
                 bubbles: true,
                 composed: true,
-                detail: { action: 'deleted', postId: this._postData?.id, posts: [] }
+                detail: { postId: this._postData?.id }
             }));
         });
     }

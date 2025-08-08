@@ -67,6 +67,15 @@ export class DataService {
     getPosts(): Post[] {
         return [...this._posts];
     }
+
+    async getPost(postId: number): Promise<Post> {
+        const post = this._posts.find(p => p.id === postId);
+        if (post) {
+            return post;
+        } else {
+            throw new Error(`Post with ID ${postId} not found`);
+        }
+    }
 }
 
 export const dataService = new DataService();

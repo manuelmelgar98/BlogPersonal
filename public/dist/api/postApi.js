@@ -9,7 +9,7 @@ export async function fetchPosts() {
             const storedPosts = localStorage.getItem(STORAGE_KEY);
             const posts = storedPosts ? JSON.parse(storedPosts) : [];
             // Ordena los posts por fecha de forma descendente (los más recientes primero)
-            posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+            // posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
             resolve(posts);
         }, 300); // 300ms de retraso
     });
